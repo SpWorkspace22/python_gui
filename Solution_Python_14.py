@@ -17,92 +17,99 @@ def GetValue(event):
 
 
 def Add():
-    studid = e1.get()
-    studname = e2.get()
-    coursename = e3.get()
-    feee = e4.get()
+    empid = e1.get()
+    empname = e2.get()
+    mobile = e3.get()
+    salary = e4.get()
 
-    mysqldb=mysql.connector.connect(host="localhost",user="root",password="root",database="sonudb")
-    mycursor=mysqldb.cursor()
+    if(empid!="" or empname!="" or mobile!="" or salary !=""):
+        mysqldb=mysql.connector.connect(host="localhost", user="root", password="root", port=3306,database="sonudb")
+        mycursor=mysqldb.cursor()
 
-    try:
-       sql = "INSERT INTO  registation (id,empname,mobile,salary) VALUES (%s, %s, %s, %s)"
-       val = (studid,studname,coursename,feee)
-       mycursor.execute(sql, val)
-       mysqldb.commit()
-       lastid = mycursor.lastrowid
-       messagebox.showinfo("information", "Employee inserted successfully...")
-       e1.delete(0, END)
-       e2.delete(0, END)
-       e3.delete(0, END)
-       e4.delete(0, END)
-       e1.focus_set()
-    except Exception as e:
-       print(e)
-       mysqldb.rollback()
-       mysqldb.close()
+        try:
+           sql = "INSERT INTO  registation (id,empname,mobile,salary) VALUES (%s, %s, %s, %s)"
+           val = (empid,empname,mobile,salary)
+           mycursor.execute(sql, val)
+           mysqldb.commit()
+           lastid = mycursor.lastrowid
+           messagebox.showinfo("information", "Employee inserted successfully...")
+           e1.delete(0, END)
+           e2.delete(0, END)
+           e3.delete(0, END)
+           e4.delete(0, END)
+           e1.focus_set()
+        except Exception as e:
+           print(e)
+           mysqldb.rollback()
+           mysqldb.close()
+    else:
+        messagebox.showinfo("information", "Not All Information Provided..")
 
 
 def update():
-    studid = e1.get()
-    studname = e2.get()
-    coursename = e3.get()
-    feee = e4.get()
-    mysqldb=mysql.connector.connect(host="localhost",user="root",password="root",database="sonudb")
+    empid = e1.get()
+    empname = e2.get()
+    mobile = e3.get()
+    salary = e4.get()
+    mysqldb=mysql.connector.connect(host="localhost", user="root", password="root", port=3306,database="sonudb")
     mycursor=mysqldb.cursor()
 
-    try:
-       sql = "Update  registation set empname= %s,mobile= %s,salary= %s where id= %s"
-       val = (studname,coursename,feee,studid)
-       mycursor.execute(sql, val)
-       mysqldb.commit()
-       lastid = mycursor.lastrowid
-       messagebox.showinfo("information", "Record Updateddddd successfully...")
+    if(empid!="" or empname!="" or mobile!="" or salary !=""):
+        try:
+           sql = "Update  registation set empname= %s,mobile= %s,salary= %s where id= %s"
+           val = (empname,mobile,salary,empid)
+           mycursor.execute(sql, val)
+           mysqldb.commit()
+           lastid = mycursor.lastrowid
+           messagebox.showinfo("information", "Record Updateddddd successfully...")
 
-       e1.delete(0, END)
-       e2.delete(0, END)
-       e3.delete(0, END)
-       e4.delete(0, END)
-       e1.focus_set()
-
-    except Exception as e:
-
-       print(e)
-       mysqldb.rollback()
-       mysqldb.close()
+           e1.delete(0, END)
+           e2.delete(0, END)
+           e3.delete(0, END)
+           e4.delete(0, END)
+           e1.focus_set()
+        except Exception as e:
+           print(e)
+           mysqldb.rollback()
+           mysqldb.close()
+    else:
+        messagebox.showinfo("information", "Record to update not selected..")
 
 def delete():
-    studid = e1.get()
+    empid = e1.get()
 
-    mysqldb=mysql.connector.connect(host="localhost",user="root",password="root",database="sonudb")
-    mycursor=mysqldb.cursor()
+    if(empid!=""):
+        mysqldb=mysql.connector.connect(host="localhost", user="root", password="root", port=3306,database="sonudb")
+        mycursor=mysqldb.cursor()
 
-    try:
-       sql = "delete from registation where id = %s"
-       val = (studid,)
-       mycursor.execute(sql, val)
-       mysqldb.commit()
-       lastid = mycursor.lastrowid
-       messagebox.showinfo("information", "Record Deleteeeee successfully...")
+        try:
+           sql = "delete from registation where id = %s "
+           val = (empid,)
+           mycursor.execute(sql, val)
+           mysqldb.commit()
+           lastid = mycursor.lastrowid
+           messagebox.showinfo("information", "Record Deleteeeee successfully...")
 
-       e1.delete(0, END)
-       e2.delete(0, END)
-       e3.delete(0, END)
-       e4.delete(0, END)
-       e1.focus_set()
+           e1.delete(0, END)
+           e2.delete(0, END)
+           e3.delete(0, END)
+           e4.delete(0, END)
+           e1.focus_set()
+           
+        except Exception as e:
+           print(e)
+           mysqldb.rollback()
+           mysqldb.close()
+    else:
+            messagebox.showinfo("information", "No Record Deleted.")
 
-    except Exception as e:
+def show():  
+        mysqldb = mysql.connector.connect(host="localhost", user="root", password="root", port=3306,database="sonudb")
+        mycursor = mysqldb.cursor()
 
-       print(e)
-       mysqldb.rollback()
-       mysqldb.close()
-
-def show():
         for item in listBox.get_children():
           listBox.delete(item)
-
-        mysqldb = mysql.connector.connect(host="localhost", user="root", password="root", database="sonudb")
-        mycursor = mysqldb.cursor()
+          
         mycursor.execute("SELECT id,empname,mobile,salary FROM registation")
         records = mycursor.fetchall()
 
@@ -112,6 +119,10 @@ def show():
 
 root = Tk()
 root.geometry("800x500")
+global e1
+global e2
+global e3
+global e4
 
 tk.Label(root, text="Employee Registation", fg="red", font=(None, 30)).place(x=300, y=5)
 
@@ -145,5 +156,6 @@ for col in cols:
     listBox.grid(row=1, column=0, columnspan=2)
     listBox.place(x=10, y=200)
 
+listBox.bind('<Double-Button-1>',GetValue)
 
 root.mainloop()
